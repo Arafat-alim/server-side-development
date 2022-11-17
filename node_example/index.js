@@ -1,7 +1,9 @@
-const rect = {
-  perimeter: (l, b) => 2 * (l + b),
-  area: (l, b) => l * b,
-};
+// const rect = {
+//   perimeter: (l, b) => 2 * (l + b),
+//   area: (l, b) => l * b,
+// };
+
+const rect = require("./rectangle");
 
 function solveRectangle(l, b) {
   console.log(`THe length is ${l} and breadth is ${b} `);
