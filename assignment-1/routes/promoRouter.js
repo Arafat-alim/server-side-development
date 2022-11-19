@@ -25,10 +25,10 @@ promoRouter
   })
   .put((req, res, next) => {
     res.statusCode = 403;
-    res.end("POST operation is not supported!");
+    res.end("POST operation is not supported! on /promotions ");
   })
   .delete((req, res, next) => {
-    res.end("Delete all the promos");
+    res.end("Deleting all the promos");
   });
 
 promoRouter

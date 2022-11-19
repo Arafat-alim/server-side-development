@@ -13,8 +13,8 @@ const app = express();
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use("/dishes", dishRouter);
-app.use("/leader", leaderRouter);
-app.use("/promo", promoRouter);
+app.use("/leaders", leaderRouter);
+app.use("/promotions", promoRouter);
 app.use(express.static(__dirname + "/public"));
 
 app.use((req, res, next) => {
