@@ -9,19 +9,15 @@ connect.then((db) => {
   console.log("Mongoose Database server connected Successfully");
 
   //! created a dish
-  const newDish = Dishes({
+  Dishes.create({
     name: "Biryani",
-    description: "THe delicious dishes buddy",
-  });
-
-  //! saving the dish
-  newDish
-    .save()
+    description: "You will Loving It",
+  })
     .then((dish) => {
-      console.log("Dish is saved", dish);
+      console.log("Saved Dish", dish);
 
       // ! finding the dishes
-      return Dishes.find({});
+      return Dishes.find({}).exec();
     }) //! deleting the entire dishes
     .then((dishes) => {
       console.log(dishes);
