@@ -55,9 +55,9 @@ dishRouter
   });
 
 dishRouter
-  .route("/:id")
+  .route("/:dishId")
   .get((req, res, next) => {
-    Dishes.findById(req.params.id)
+    Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
           res.statusCode = 200;
@@ -70,10 +70,14 @@ dishRouter
   })
   .post((req, res, next) => {
     res.statusCode = 403;
-    res.end(`PUT operation not supported on /dishes/:${req.params.id}`);
+    res.end(`PUT operation not supported on /dishes/:${req.params.dishId}`);
   })
   .put((req, res, next) => {
-    Dishes.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+    Dishes.findByIdAndUpdate(
+      req.params.dishId,
+      { $set: req.body },
+      { new: true }
+    )
       .then(
         (dish) => {
           res.statusCode = 200;
