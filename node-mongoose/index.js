@@ -16,13 +16,33 @@ connect.then((db) => {
     .then((dish) => {
       console.log("Saved Dish", dish);
 
-      // ! finding the dishes
-      return Dishes.find({}).exec();
-    }) //! deleting the entire dishes
-    .then((dishes) => {
-      console.log(dishes);
+      // ! finding the dish by id and update it
+      return Dishes.findByIdAndUpdate(
+        dish._id,
+        {
+          $set: { description: "Updated the Description" },
+        },
+        { new: true }
+      ).exec();
+    })
+    .then((dish) => {
+      console.log(dish);
+      //! adding comment
+      dish.comments.push({
+        rating: 5,
+        comment: "This is totally awfull",
+        author: "Arafat Alim",
+      });
+
+      return dish.save();
+    })
+    //! removing all the dishes from the database
+    .then((dish) => {
+      console.log("Comments added Dish", dish);
       return Dishes.remove({});
-    }) //! close the connection
+    })
+
+    //! close the connection
     .then(() => {
       return mongoose.connection.close();
     }) //! catch any error any found
