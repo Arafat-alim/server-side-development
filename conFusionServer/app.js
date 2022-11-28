@@ -4,6 +4,16 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+//! Mongodb connection
+const mongoose = require("mongoose");
+const url = "mongodb://127.0.0.1:27017/conFusion";
+const connect = mongoose.connect(url);
+connect
+  .then(() => {
+    console.log("Connected with the mongoDb Server successfully");
+  })
+  .catch((err) => console.log(err));
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const dishRouter = require("./routes/dishRouter");
