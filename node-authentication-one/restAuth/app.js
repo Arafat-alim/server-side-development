@@ -43,49 +43,22 @@ app.use(
     store: new FileStore(),
   })
 );
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
-//! Adding authentication + cookies
 function auth(req, res, next) {
-  console.log(req.headers);
-  console.log(req.signedCookies);
   console.log(req.session);
   if (!req.session.user) {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      const err = new Error("You are not authenticated!");
-      res.setHeader("WWW-Authenticate", "Basic");
-      err.status = 401;
-      return next(err);
-    }
-    //! Extract out the username and password, and check whether the auth is verfied or not
-    const auth = new Buffer.from(authHeader.split(" ")[1], "base64")
-      .toString()
-      .split(":");
-
-    const username = auth[0];
-    const password = auth[1];
-    //! check the valid user or not
-    if (username === "admin" && password === "password") {
-      //! set up the cookies
-      //res.cookie("user", "admin", { signed: true });
-
-      req.session.user = "admin";
+    var err = new Error("You are not authenticated!");
+    err.status = 401;
+    return next(err);
+  } else {
+    if (req.session.user === "authenticated") {
       next();
     } else {
-      const err = new Error("You are not authenticated!");
-      res.setHeader("WWW-Authenticate", "Basic");
-      err.status = 401;
-      return next(err);
-    }
-  } else {
-    //! if cookies is present in the client side
-    if (req.session.user === "admin") {
-      next(); //! authorized
-    } else {
-      const err = new Error("You are not authenticated");
-      err.status = 401;
-      return next(err);
+      var err = new Error("You are not authenticated!");
+      err.status = 403; //forbidden
+      next(err);
     }
   }
 }
@@ -94,8 +67,6 @@ app.use(auth);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
 app.use("/dishes", dishRouter);
 app.use("/promotions", promoRouter);
 app.use("/leaders", leaderRouter);
