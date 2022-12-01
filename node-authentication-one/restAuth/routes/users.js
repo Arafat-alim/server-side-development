@@ -2,6 +2,7 @@ var express = require("express");
 const bodyParser = require("body-parser");
 const User = require("../models/user");
 var router = express.Router();
+const passport = require("passport");
 
 /* GET users listing. */
 router.use(bodyParser.json());
@@ -11,6 +12,7 @@ router.get("/", function (req, res, next) {
 });
 
 //! signup
+/*
 router.post("/signup", (req, res, next) => {
   //! CHeck whether user is existing or not
   User.findOne({ username: req.body.username })
@@ -45,7 +47,34 @@ router.post("/signup", (req, res, next) => {
     })
     .catch((err) => next(err));
 });
+
+*/
+
+//! Updated signUp using passport module
+router.post("/signup", (req, res) => {
+  User.register(
+    new User({ username: req.body.username }),
+    req.body.password,
+    (err, user) => {
+      if (err) {
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "application/json");
+        res.json({ err: err });
+      } else {
+        passport.authenticate("local")((req, res) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json({
+            success: true,
+            status: "Registration Successfully!",
+          });
+        });
+      }
+    }
+  );
+});
 //! login
+/*
 router.post("/login", (req, res, next) => {
   //! session is not found
   if (!req.session.user) {
@@ -99,8 +128,17 @@ router.post("/login", (req, res, next) => {
     res.end("You are already authenticated!");
   }
 });
+
+*/
+//! login - Here user data expecting comes from the body of the requset not authorization header
+router.use("/login", passport.authenticate("local"), (req, res) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.json({ success: true, status: "You are successfully logged in!" });
+});
+
 //! logout
-router.get("/logput", (req, res, next) => {
+router.get("/logout", (req, res, next) => {
   //! If session is present then destroyed it
   if (req.session) {
     //! deleting the session
