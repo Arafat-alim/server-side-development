@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const User = require("../models/user");
 var router = express.Router();
 const passport = require("passport");
+const authenticate = require("../authenticate");
 
 /* GET users listing. */
 router.use(bodyParser.json());
@@ -131,10 +132,16 @@ router.post("/login", (req, res, next) => {
 
 */
 //! login - Here user data expecting comes from the body of the requset not authorization header
-router.use("/login", passport.authenticate("local"), (req, res) => {
+router.post("/login", passport.authenticate("local"), (req, res) => {
+  //! if authenticate successfull then generate a token and give back to the client
+  const token = authenticate.getToken({ _id: req.user._id }); //! id is sufficient enough for this
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({ success: true, status: "You are successfully logged in!" });
+  res.json({
+    success: true,
+    token: token,
+    status: "You are successfully logged in!",
+  });
 });
 
 //! logout
