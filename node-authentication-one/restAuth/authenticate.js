@@ -3,7 +3,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/user");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken"); //! used to create, sign, and verify tokens
 
 const config = require("./config");
 
@@ -18,7 +18,7 @@ exports.getToken = function (user) {
 };
 
 //! create a strategy for our passport, fromAuthHeaderAsBearerToken() authorization token header
-const opts = {};
+let opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secretKey;
 

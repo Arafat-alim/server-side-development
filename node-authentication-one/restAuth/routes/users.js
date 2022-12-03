@@ -1,7 +1,9 @@
 var express = require("express");
+var router = express.Router();
+
 const bodyParser = require("body-parser");
 const User = require("../models/user");
-var router = express.Router();
+
 const passport = require("passport");
 const authenticate = require("../authenticate");
 
@@ -62,12 +64,12 @@ router.post("/signup", (req, res) => {
         res.setHeader("Content-Type", "application/json");
         res.json({ err: err });
       } else {
-        passport.authenticate("local")((req, res) => {
+        passport.authenticate("local")(req, res, () => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
           res.json({
             success: true,
-            status: "Registration Successfully!",
+            stautus: "Registration Successfully!",
           });
         });
       }
@@ -134,7 +136,7 @@ router.post("/login", (req, res, next) => {
 //! login - Here user data expecting comes from the body of the requset not authorization header
 router.post("/login", passport.authenticate("local"), (req, res) => {
   //! if authenticate successfull then generate a token and give back to the client
-  const token = authenticate.getToken({ _id: req.user._id }); //! id is sufficient enough for this
+  let token = authenticate.getToken({ _id: req.user._id }); //! id is sufficient enough for this
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.json({
@@ -154,7 +156,7 @@ router.get("/logout", (req, res, next) => {
     res.redirect("/"); //! redirect the user to the home page
   } else {
     const err = new Error("You are not logged in!");
-    err.statusCode = 401;
+    err.statusCode = 403;
     return next(err);
   }
 });
