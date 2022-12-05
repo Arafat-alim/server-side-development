@@ -64,12 +64,26 @@ router.post("/signup", (req, res) => {
         res.setHeader("Content-Type", "application/json");
         res.json({ err: err });
       } else {
-        passport.authenticate("local")(req, res, () => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json({
-            success: true,
-            stautus: "Registration Successfully!",
+        if (req.body.firstname) {
+          user.firstname = req.body.firstname;
+        }
+        if (req.body.lastname) {
+          user.lastname = req.body.lastname;
+        }
+        user.save((err, user) => {
+          if (err) {
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "application/json");
+            res.json({ err: err });
+            return;
+          }
+          passport.authenticate("local")(req, res, () => {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json({
+              success: true,
+              stautus: "Registration Successfully!",
+            });
           });
         });
       }
@@ -134,7 +148,7 @@ router.post("/login", (req, res, next) => {
 
 */
 //! login - Here user data expecting comes from the body of the requset not authorization header
-router.post("/login", passport.authenticate("local"), (req, res) => {
+router.post("/login", passport.authenticate("local"), (req, res, next) => {
   //! if authenticate successfull then generate a token and give back to the client
   let token = authenticate.getToken({ _id: req.user._id }); //! id is sufficient enough for this
   res.statusCode = 200;

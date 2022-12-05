@@ -13,6 +13,16 @@ const User = new Schema({
   //   required: true,
   // },
   //1 user name and password added by the passport-local-mongoose
+  firstName: {
+    type: String,
+    default: "",
+  },
+
+  username: {
+    type: String,
+    default: "",
+  },
+
   admin: {
     type: Boolean,
     default: false,
