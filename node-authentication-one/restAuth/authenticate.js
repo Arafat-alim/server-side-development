@@ -40,3 +40,25 @@ exports.jwtPassport = passport.use(
 //! Passport authenticate **important one
 module.exports.verifyUser = passport.authenticate("jwt", { session: false }); //! token base application
 //! thats why session is false
+
+//! Creating an admin verify user
+module.exports.verifyAdmin = function (req, res, next) {
+  //! Finding the user
+  User.findOne({ _id: req.user._id })
+    .then(
+      (user) => {
+        console.log("User: ", req.user);
+        if (user.author) {
+          next();
+        } else {
+          const err = new Error(
+            "You are not authorized to perform this operation"
+          );
+          err.staus = 403;
+          return next(err);
+        }
+      },
+      (err) => next(err)
+    )
+    .catch((err) => next(err));
+};
