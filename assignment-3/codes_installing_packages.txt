@@ -38,6 +38,11 @@ packages needed for creating authenticate.js
 3. passport-jwt
 4. jsonwebtoken
 
+User router required packages
+1. express 
+2. express.Router()
+3. body-parser
+4. passport
 
 
 
