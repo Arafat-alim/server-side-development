@@ -18,7 +18,7 @@ const passport = require("passport");
 const authenticate = require("./authenticate");
 
 //! connection to mongo db
-const url = config.mongoUrl;
+const url = config.mongoURL;
 const connect = mongoose.connect(url, {
   useMongoClient: true,
 });
