@@ -3,14 +3,17 @@ var express = require("express");
 var path = require("path");
 // var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var bodyParser = require("body-parser");
 const config = require("./config");
+var session = require("express-session");
+var FileStore = require("session-file-store")(session);
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const dishRouter = require("./routes/dishRouter");
 
 const mongoose = require("mongoose");
-mongoose.Promise = require("bluebird");
+// mongoose.Promise = require("bluebird");
 
 const Dishes = require("./models/dishes");
 
@@ -19,8 +22,10 @@ const authenticate = require("./authenticate");
 
 //! connection to mongo db
 const url = config.mongoURL;
+//! Please note - Install mongoose version - 4.13.0
 const connect = mongoose.connect(url, {
   useMongoClient: true,
+  //other options
 });
 
 connect.then(
@@ -31,6 +36,15 @@ connect.then(
 );
 
 var app = express();
+
+// Authentication configuration
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: config.secretKey,
+  })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -44,6 +58,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
 app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

@@ -1,10 +1,11 @@
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
-const jwt = require("jsonwebtoken");
-const User = require("./models/users");
-const config = require("./config");
+var passport = require("passport");
+var LocalStrategy = require("passport-local").Strategy;
+var User = require("./models/users");
+var JwtStrategy = require("passport-jwt").Strategy;
+var ExtractJwt = require("passport-jwt").ExtractJwt;
+var jwt = require("jsonwebtoken"); // used to create, sign, and verify tokens
+
+var config = require("./config.js");
 
 exports.local = passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -14,20 +15,20 @@ exports.getToken = function (user) {
   return jwt.sign(user, config.secretKey, { expiresIn: 3600 });
 };
 
-let opts = {};
+var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOfKey = config.secretKey;
+opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    console.log("JWT Payload: ", jwt_payload);
+    console.log("JWT payload: ", jwt_payload);
     User.findOne({ _id: jwt_payload._id }, (err, user) => {
       if (err) {
         return done(err, false);
       } else if (user) {
         return done(null, user);
       } else {
-        return done(err, false);
+        return done(null, false);
       }
     });
   })

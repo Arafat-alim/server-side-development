@@ -126,14 +126,14 @@ dishRouter
             res.setHeader("Content-Type", "application/json");
             res.json(dish.comments);
           } else {
-            const err = new Error("Dish " + req.params.dishId + "not Found!");
+            const err = new Error(`Dish ${req.params.dishId} not found`);
             err.status = 404;
             return next(err);
           }
         },
         (err) => next(err)
       )
-      .catch();
+      .catch((err) => next(err));
   })
   .post(authenticate.verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
@@ -210,7 +210,7 @@ dishRouter
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(dish.comments.id(req.params.commentId));
-          } else if (dish === null) {
+          } else if (dish == null) {
             err = new Error(`Dish ${req.params.dishId} not found!`);
             err.status = 404;
             return next(err);
@@ -240,8 +240,8 @@ dishRouter
             if (req.body.rating) {
               dish.comments.id(req.params.commentId).rating = req.body.rating;
             }
-            if (req.body.author) {
-              dish.comments.id(req.params.commentId).author = req.body.author;
+            if (req.body.comment) {
+              dish.comments.id(req.params.commentId).comment = req.body.comment;
             }
             dish.save().then(
               (dish) => {
@@ -283,7 +283,7 @@ dishRouter
               (dish) => {
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");
-                return next(err);
+                return next(dish);
               },
               (err) => next(err)
             );
@@ -291,7 +291,7 @@ dishRouter
             err = new Errpr(`Dish ${req.params.dishId} not Found!`);
             err.status = 404;
             return next(err);
-          } else if (dish.comments.id(req.params.commentId) === null) {
+          } else if (dish.comments.id(req.params.commentId) == null) {
             err = new Error(`Comment ${req.params.commentId} not found!`);
             err.status = 404;
             return next(err);

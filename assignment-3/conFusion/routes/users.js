@@ -52,7 +52,7 @@ router.post("/signup", (req, res, next) => {
             res.json({ err: err });
             return;
           }
-          passport.authenticate("local")(req.res, () => {
+          passport.authenticate("local")(req, res, () => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json({ success: true, status: "Registration Successfully" });
@@ -76,15 +76,16 @@ router.post("/login", passport.authenticate("local"), (req, res, next) => {
 });
 
 //! end point - users/logout
-router.get("/logout", (req, res, next) => {
+router.get("/logout", (req, res) => {
   if (req.session) {
     req.session.destroy();
-    req.cleanCookie("session-id");
+    res.clearCookie("session-id");
     res.redirect("/");
   } else {
-    const err = new Error("You are not logged in!");
-    err.status = 500;
-    return next(err);
+    var err = new Error("You are not logged in!");
+    err.status = 403;
+    next(err);
   }
 });
+
 module.exports = router;
